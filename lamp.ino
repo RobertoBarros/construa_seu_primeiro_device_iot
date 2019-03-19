@@ -1,8 +1,8 @@
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 
-const char* SSID = "iPhone de Roberto";
-const char* PASSWORD = "OzbfiI7!lUTN2hZLmr!BHeh6uReIX&";
+const char* SSID = "nome da rede";
+const char* PASSWORD = "senha da rede";
 const char* BROKER_MQTT = "iot.eclipse.org";
 int BROKER_PORT = 1883;
 const char* TOPIC = "lewagon-iot-lamp";
