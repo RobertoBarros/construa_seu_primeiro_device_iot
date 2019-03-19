@@ -3,7 +3,7 @@
 
 const char* SSID = "iPhone de Roberto";
 const char* PASSWORD = "OzbfiI7!lUTN2hZLmr!BHeh6uReIX&";
-const char* BROKER_MQTT = "broker.hivemq.com";
+const char* BROKER_MQTT = "iot.eclipse.org";
 int BROKER_PORT = 1883;
 const char* TOPIC = "lewagon-iot-lamp";
 
@@ -67,7 +67,7 @@ void mqtt_callback(char* topic, byte* payload, unsigned int length) {
 void setup() {
   Serial.begin(115200);
   pinMode(D0, OUTPUT);
-  
+
   initWiFi();
   initMQTT();
 }
