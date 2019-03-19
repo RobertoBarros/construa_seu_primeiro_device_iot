@@ -1,0 +1,57 @@
+<html>
+<head>
+  <title>test Ws mqtt.js</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.1.0/paho-mqtt.min.js"></script>
+
+
+</head>
+<body>
+
+  <button id='on'>Ligar</button>
+  <button id='off'>Desligar</button>
+  <h1 id='status'></h1>
+
+  <script>
+    var wsbroker = "broker.hivemq.com";
+    var wsport = 8000;
+    var randomId = parseInt(Math.random() * 100, 10)
+    var client = new Paho.Client(wsbroker, wsport, "myclientid_" + randomId);
+
+    client.connect({onSuccess:onConnect});
+    client.onConnectionLost = onConnectionLost;
+    client.onMessageArrived = onMessageArrived;
+
+    function onConnect() {
+      client.subscribe("lewagon-iot-lamp");
+      console.log("Conectado");
+      document.getElementById('status').innerText = 'conectado'
+    }
+
+    function onConnectionLost(responseObject) {
+      if (responseObject.errorCode !== 0) {
+        console.log("onConnectionLost:"+responseObject.errorMessage);
+      }
+    }
+
+    function onMessageArrived(message) {
+      console.log("onMessageArrived:"+message.payloadString);
+      document.getElementById('status').innerText = message.payloadString == 'on' ? 'Ligado' : 'Desligado'
+    }
+
+    function sendMessage(message) {
+      return function() {
+        mqtt_message = new Paho.Message(message);
+        mqtt_message.destinationName = "lewagon-iot-lamp";
+        client.send(mqtt_message);
+      }
+    }
+
+    document.getElementById('on').addEventListener('click', sendMessage('on'));
+    document.getElementById('off').addEventListener('click', sendMessage('off'));
+
+
+  </script>
+
+
+</body>
+</html>
