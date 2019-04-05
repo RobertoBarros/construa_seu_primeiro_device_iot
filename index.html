@@ -1,15 +1,31 @@
 <html>
 <head>
-  <title>test Ws mqtt.js</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.1.0/paho-mqtt.min.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
+  <title>Client MQTT Web</title>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.1.0/paho-mqtt.min.js">
+  </script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
 <body>
-
-  <button id='on'>Ligar</button>
-  <button id='off'>Desligar</button>
-  <h1 id='status'></h1>
+  <div class="container">
+    <h1 class="text-center">Lamp remote control</h1>
+    <div class="row mt-5 text-center">
+      <div class="col-6">
+        <button class="btn btn-primary btn-lg" id='on'>Turn On</button>
+      </div>
+      <div class="col-6">
+        <button class="btn btn-danger btn-lg" id='off'>Turn Off</button>
+      </div>
+    </div>
+    <div class="row mt-5">
+      <div class="col-12">
+        <h1 id='message' class="text-center"></h1>
+      </div>
+    </div>
+  </div>
 
   <script>
     var wsbroker = "iot.eclipse.org";
@@ -18,27 +34,14 @@
     var client = new Paho.Client(wsbroker, wsport, "myclientid_" + randomId);
 
     client.connect({onSuccess:onConnect , useSSL: true});
-    client.onConnectionLost = onConnectionLost;
-    client.onMessageArrived = onMessageArrived;
 
     function onConnect() {
       client.subscribe("lewagon-iot-lamp");
-      console.log("Conectado");
-      document.getElementById('status').innerText = 'conectado'
+      console.log("Connected!");
+      document.getElementById('message').innerText = 'Connected'
     }
 
-    function onConnectionLost(responseObject) {
-      if (responseObject.errorCode !== 0) {
-        console.log("onConnectionLost:"+responseObject.errorMessage);
-      }
-    }
-
-    function onMessageArrived(message) {
-      console.log("onMessageArrived:"+message.payloadString);
-      document.getElementById('status').innerText = message.payloadString == 'on' ? 'Ligado' : 'Desligado'
-    }
-
-    function sendMessage(message) {
+   function sendMessage(message) {
       return function() {
         mqtt_message = new Paho.Message(message);
         mqtt_message.destinationName = "lewagon-iot-lamp";
@@ -49,6 +52,12 @@
     document.getElementById('on').addEventListener('click', sendMessage('on'));
     document.getElementById('off').addEventListener('click', sendMessage('off'));
 
+    client.onMessageArrived = onMessageArrived;
+
+    function onMessageArrived(message) {
+      console.log("onMessageArrived:"+message.payloadString);
+      document.getElementById('message').innerText = message.payloadString === 'on' ? 'Lamp On' : 'Lamp Off';
+    }
 
   </script>
 
